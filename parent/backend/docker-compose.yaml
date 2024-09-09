@@ -1,0 +1,144 @@
+version: '3.8'
+
+services:
+
+# microservice components 
+  api-gateway:
+    image: node:14
+    volumes:
+      - ./api-gateway:/app
+    working_dir: /app
+    command: npm start
+    ports:
+      - "9400:3000"
+
+  caching:
+    image: redis:6.0
+    ports:
+      - "6379:6379"
+
+  logging:
+    image: elasticsearch:7.9.2
+    ports:
+      - "9200:9200"
+
+  circuit-breaker:
+    image: node:14
+    volumes:
+      - ./circuit-breaker:/app
+    working_dir: /app
+    command: sh -c "npm install && npm start" # Run npm install before npm start
+    ports:
+      - "9300:3000"
+    depends_on:
+      - expenses-service
+
+  monitoring:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+
+  service-discovery:
+    image: consul:1.12.0  # Replace with the latest stable version if needed
+    ports:
+      - "8500:8500"  # Consul web UI and API
+    command: agent -dev -client=0.0.0.0  # Run Consul in development mode and accept connections from any IP
+
+  node-service:
+    image: node:18
+    working_dir: /app
+    volumes:
+      - ./service-discovery:/app
+    command: node index.js
+    ports:
+      - "3000:3000"  # Node.js service runs on port 3000
+    environment:
+      - PORT=3000
+      - CONSUL_URL=http://service-discovery:8500  # Point to the Consul service
+    depends_on:
+      - service-discovery
+
+# Product related services
+
+  feed-management-service:
+    image: node:14
+    volumes:
+      - ./feed-management-service:/app
+    working_dir: /app
+    command: npm start
+    ports:
+    - "3007:3000"
+    depends_on:
+      - mongodb
+
+  production-service:
+    image: node:18
+    volumes:
+      - ./production-service:/app
+    working_dir: /app
+    command: npm start
+    ports:
+    - "3001:3000"
+    depends_on:
+      - mongodb
+
+  employee-service:
+    image: node:14
+    volumes:
+      - ./employee-service:/app
+    working_dir: /app
+    command: npm start
+    ports:
+    - "3002:3000"
+    depends_on:
+      - mongodb
+
+  salary-management-service:
+    image: node:14
+    volumes:
+      - ./salary-management-service:/app
+    working_dir: /app
+    command: npm start
+    ports:
+    - "3003:3000"
+    depends_on:
+      - mongodb
+
+  expenses-service:
+    image: node:18  # Updated Node.js version
+    volumes:
+      - ./expenses-service:/app
+    working_dir: /app
+    command: npm start
+    ports:
+    - "3004:3000"
+    depends_on:
+      - mongodb
+
+
+  sales-service:
+    image: node:18
+    volumes:
+      - ./sales-service:/app
+    working_dir: /app
+    command: npm start
+    ports:
+    - "3005:3000"
+    depends_on:
+      - mongodb
+
+  expenses-type-service:
+    image: node:18  # Update this to a version compatible with your code
+    working_dir: /app
+    volumes:
+      - ./expenses-type-service:/app
+    command: npm start
+    ports:
+      - "3006:3000"
+    depends_on:
+      - mongodb
+
+  mongodb:
+      image: mongo:latest
+      ports:
+        - "27017:27017"
