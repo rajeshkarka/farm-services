@@ -1,0 +1,68 @@
+/* Basic reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+  }
+  
+  .app-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .left-nav {
+    width: 250px;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+  }
+  
+  .left-nav h2 {
+    margin-bottom: 20px;
+    color: #fff;
+  }
+  
+  .left-nav ul {
+    list-style: none;
+  }
+  
+  .left-nav ul li {
+    margin: 15px 0;
+  }
+  
+  .left-nav ul li a {
+    color: #ddd;
+    text-decoration: none;
+  }
+  
+  .left-nav ul li a:hover {
+    color: #fff;
+  }
+  
+  .body-content {
+    margin-left: 250px; /* Matches the width of left-nav */
+    padding: 20px;
+    flex: 1;
+    background-color: #f4f4f9;
+    overflow-y: auto;
+  }
+  
+  h1 {
+    margin-bottom: 10px;
+  }
+  
+  p {
+    margin-top: 0;
+  }
+  
