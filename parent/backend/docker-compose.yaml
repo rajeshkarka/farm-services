@@ -4,7 +4,8 @@ services:
 
 # microservice components 
   api-gateway:
-    image: node:14
+    network_mode: "host"
+    image: node:18
     volumes:
       - ./api-gateway:/app
     working_dir: /app
@@ -23,7 +24,7 @@ services:
       - "9200:9200"
 
   circuit-breaker:
-    image: node:14
+    image: node:18
     volumes:
       - ./circuit-breaker:/app
     working_dir: /app
@@ -51,9 +52,9 @@ services:
       - ./service-discovery:/app
     command: node index.js
     ports:
-      - "3000:3000"  # Node.js service runs on port 3000
+      - "4000:3000"  # Node.js service runs on port 3000
     environment:
-      - PORT=3000
+      - PORT=4000
       - CONSUL_URL=http://service-discovery:8500  # Point to the Consul service
     depends_on:
       - service-discovery
@@ -61,7 +62,7 @@ services:
 # Product related services
 
   feed-management-service:
-    image: node:14
+    image: node:18
     volumes:
       - ./feed-management-service:/app
     working_dir: /app
@@ -83,7 +84,7 @@ services:
       - mongodb
 
   employee-service:
-    image: node:14
+    image: node:18
     volumes:
       - ./employee-service:/app
     working_dir: /app
