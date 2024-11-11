@@ -22,7 +22,7 @@ import ExpensesChart from '../components/ExpensesChart';
 import SalesChart from '../components/SalesChart';
 import QuickActions from '../components/QuickActions';
 import RecentActivity from '../components/RecentActivity';
-import api from '../api';
+import api from './../api';
 
 const HomePage = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
