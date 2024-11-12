@@ -27,10 +27,10 @@ import api from './../api';
 const HomePage = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [metrics, setMetrics] = useState({
-    production: null,
-    stock: null,
-    sales: null,
-    expenses: null,
+    production: 0,
+    stock: 0,
+    sales: 0,
+    //expenses: 0,
   });
   const [recentActivity, setRecentActivity] = useState([]);
   const [quickActions, setQuickActions] = useState([]);
@@ -40,45 +40,33 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    // Fetch metrics data
     const fetchMetrics = async () => {
       try {
-        const [production, stock, sales, expenses] = await Promise.all([
+        const [productionData, stockData, salesData, expensesData] = await Promise.all([
           api.fetchProduction(),
           api.fetchStock(),
           api.fetchSales(),
-          api.fetchExpenses(),
+          //api.fetchExpenses(),
         ]);
-        setMetrics({ production, stock, sales, expenses });
+  
+        setMetrics({
+          production: productionData?.totalProduction || 0,
+          stock: stockData?.totalStock || 0,
+          sales: salesData?.totalSales || 0,
+          //expenses: expensesData?.totalExpenses || 0,
+        });
+  
+        console.log('Metrics Updated:', { productionData, stockData, salesData, expensesData });
       } catch (error) {
         console.error('Error fetching metrics:', error);
       }
     };
-
-    // Fetch recent activity
-    const fetchRecentActivity = async () => {
-      try {
-        const activity = await api.fetchRecentActivity();
-        setRecentActivity(activity);
-      } catch (error) {
-        console.error('Error fetching recent activity:', error);
-      }
-    };
-
-    // Fetch quick actions
-    const fetchQuickActions = async () => {
-      try {
-        const actions = await api.fetchQuickActions();
-        setQuickActions(actions);
-      } catch (error) {
-        console.error('Error fetching quick actions:', error);
-      }
-    };
-
+  
     fetchMetrics();
-    fetchRecentActivity();
-    fetchQuickActions();
   }, []);
+  
+  
+
 
   const drawerList = (
     <Box
@@ -155,34 +143,35 @@ const HomePage = () => {
         </Grid>
 
         <Grid item xs={12} md={9}>
-          <Grid container spacing={3}>
-            {[
-              { title: "Total Production", value: metrics.production, bgColor: "#E3F2FD", color: "#1E88E5" },
-              { title: "Stock", value: metrics.stock, bgColor: "#FFF3E0", color: "#FB8C00" },
-              { title: "Sales", value: metrics.sales, bgColor: "#E8F5E9", color: "#43A047" },
-              { title: "Expenses", value: metrics.expenses, bgColor: "#FFEBEE", color: "#E53935" },
-            ].map((metric, index) => (
-              <Grid item xs={12} sm={6} md={6} key={index}>
-                <Paper
-                  elevation={3}
-                  sx={{
-                    padding: 3,
-                    textAlign: 'center',
-                    borderRadius: 2,
-                    backgroundColor: metric.bgColor,
-                    color: metric.color,
-                    transition: 'transform 0.3s',
-                    '&:hover': { transform: 'scale(1.05)' },
-                  }}
-                >
-                  <Typography variant="subtitle1">{metric.title}</Typography>
-                  <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                    {metric.value || 'Loading...'}
-                  </Typography>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
+        <Grid container spacing={3}>
+  {[
+    { title: "Total Production", value: metrics.production || 'Loading...', bgColor: "#E3F2FD", color: "#1E88E5" },
+    { title: "Stock", value: metrics.stock || 'Loading...', bgColor: "#FFF3E0", color: "#FB8C00" },
+    { title: "Sales", value: metrics.sales || 'Loading...', bgColor: "#E8F5E9", color: "#43A047" },
+    /*{ title: "Expenses", value: metrics.expenses || 'Loading...', bgColor: "#FFEBEE", color: "#E53935" },*/
+  ].map((metric, index) => (
+    <Grid item xs={12} sm={6} md={6} key={index}>
+      <Paper
+        elevation={3}
+        sx={{
+          padding: 3,
+          textAlign: 'center',
+          borderRadius: 2,
+          backgroundColor: metric.bgColor,
+          color: metric.color,
+          transition: 'transform 0.3s',
+          '&:hover': { transform: 'scale(1.05)' },
+        }}
+      >
+        <Typography variant="subtitle1">{metric.title}</Typography>
+        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+          {metric.value}
+        </Typography>
+      </Paper>
+    </Grid>
+  ))}
+</Grid>
+
 
           <Divider sx={{ my: 4 }} />
           <Typography variant="h6" sx={{ mb: 2 }}>

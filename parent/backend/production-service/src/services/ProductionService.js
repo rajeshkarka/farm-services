@@ -55,6 +55,11 @@ exports.getWeeklyProduction = async (week) => {
  * @param {String} month - Month in 'YYYY-MM' format (e.g., '2024-08').
  * @returns {Promise<Array>} - Aggregated monthly production data.
  */
+/**
+ * Get monthly production data.
+ * @param {String} month - Month in 'YYYY-MM' format (e.g., '2024-08').
+ * @returns {Promise<Object>} - Aggregated monthly production data.
+ */
 exports.getMonthlyProduction = async (month) => {
     try {
         // Split the month string to get year and month number
@@ -78,13 +83,16 @@ exports.getMonthlyProduction = async (month) => {
                 $group: {
                     _id: null,
                     totalEggsProduced: { $sum: '$eggsProduced' },
-                    totalDamagedEggs: { $sum: '$damagedEggs' }
+                    totalDamagedEggs: { $sum: '$damagedEggs' },
+                    totalStock: { $sum: { $ifNull: ['$stock', 0] } } // Handle missing stock values
                 }
             }
         ]);
+        
 
-        return monthlyProduction.length ? monthlyProduction[0] : { totalEggsProduced: 0, totalDamagedEggs: 0 };
+        return monthlyProduction.length ? monthlyProduction[0] : { totalEggsProduced: 0, totalDamagedEggs: 0, totalStock: 0 };
     } catch (error) {
         throw new Error(`Error fetching monthly production: ${error.message}`);
     }
 };
+

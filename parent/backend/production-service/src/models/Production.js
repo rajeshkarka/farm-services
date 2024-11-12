@@ -7,10 +7,17 @@ const productionSchema = new mongoose.Schema({
     },
     eggsProduced: {
         type: Number,
-        required: true
+        required: true,
+        default: 0
     },
     damagedEggs: {
         type: Number,
+        required: true,
+        default: 0
+    },
+    stock: {
+        type: Number,
+        required: true,
         default: 0
     }
 });

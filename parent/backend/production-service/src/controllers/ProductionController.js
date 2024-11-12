@@ -4,6 +4,13 @@ const productionService = require('../services/productionService');
 const moment = require('moment-timezone'); // Import moment-timezone
 
 /**
+ * sample request body
+ * {
+    "date": "2023-11-01",       // Use the date you want to record
+    "eggsProduced": 200,        // Number of eggs produced
+    "damagedEggs": 5            // Optional: Number of damaged eggs
+}
+
  * Record daily production and update egg stock.
  */
 exports.recordProduction = async (req, res) => {
@@ -67,6 +74,40 @@ exports.trackProduction = async (req, res) => {
         res.status(400).json({ error: err.message });
     }
 };
+
+/**
+ * Toatal all productions.
+ */
+// Controller to fetch total stock
+exports.totalStock = async (req, res) => {
+    try {
+        const currentMonth = moment().tz('Asia/Kolkata').format('YYYY-MM');
+        
+        // Pass the current month to getMonthlyProduction
+        let eggStock = await productionService.getMonthlyProduction(currentMonth);
+
+        // Respond with totalStock if it exists
+        res.status(200).json({ totalStock: eggStock.totalStock });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+// Controller to fetch total production (eggs produced)
+exports.totalProduction = async (req, res) => {
+    try {
+        const currentMonth = moment().tz('Asia/Kolkata').format('YYYY-MM');
+        
+        // Pass the current month to getMonthlyProduction
+        let eggStock = await productionService.getMonthlyProduction(currentMonth);
+
+        // Respond with totalEggsProduced (this is the actual production)
+        res.status(200).json({ totalProduction: eggStock.totalEggsProduced });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
 
 /**
  * Get weekly production data.

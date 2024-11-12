@@ -37,6 +37,9 @@ const productionController = require('../controllers/ProductionController');
  */
 router.post('/', productionController.recordProduction);
 
+router.get('/total', productionController.totalProduction);
+router.get('/stock', productionController.totalStock);
+
 router.get('/track', productionController.trackProduction);
 router.post('/record', productionController.recordProduction);
 router.get('/weekly', productionController.getWeeklyProduction);
